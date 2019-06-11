@@ -1,0 +1,509 @@
+// LLVMCOM.idl : IDL source for LLVMCOM
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (LLVMCOM.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	v1_enum
+]
+typedef enum LLVM_PdbRaw_ImplVer {
+	PdbImplVC2 = 19941610,
+	PdbImplVC4 = 19950623,
+	PdbImplVC41 = 19950814,
+	PdbImplVC50 = 19960307,
+	PdbImplVC98 = 19970604,
+	PdbImplVC70Dep = 19990604, 
+	PdbImplVC70 = 20000404,
+	PdbImplVC80 = 20030901,
+	PdbImplVC110 = 20091201,
+	PdbImplVC140 = 20140508,
+} LLVM_PdbRaw_ImplVer;
+
+[
+	v1_enum
+]
+typedef enum LLVM_PdbRaw_FeatureSig {
+	PdbRaw_FeatureSig_VC110 = PdbImplVC110,
+	PdbRaw_FeatureSig_VC140 = PdbImplVC140,
+	PdbRaw_FeatureSig_NoTypeMerge = 0x4D544F4E,
+	PdbRaw_FeatureSig_MinimalDebugInfo = 0x494E494D,
+} LLVM_PdbRaw_FeatureSig;
+
+[
+	v1_enum
+]
+typedef enum LLVM_PdbRaw_DbiVer {
+	PdbDbiVC41 = 930803,
+	PdbDbiV50 = 19960307,
+	PdbDbiV60 = 19970606,
+	PdbDbiV70 = 19990903,
+	PdbDbiV110 = 20091201
+} LLVM_PdbRaw_DbiVer;
+
+[
+	v1_enum
+]
+typedef enum LLVM_PDB_Machine {
+	PDB_Machine_Invalid = 0xffff,
+	PDB_Machine_Unknown = 0x0,
+	PDB_Machine_Am33 = 0x13,
+	PDB_Machine_Amd64 = 0x8664,
+	PDB_Machine_Arm = 0x1C0,
+	PDB_Machine_ArmNT = 0x1C4,
+	PDB_Machine_Ebc = 0xEBC,
+	PDB_Machine_x86 = 0x14C,
+	PDB_Machine_Ia64 = 0x200,
+	PDB_Machine_M32R = 0x9041,
+	PDB_Machine_Mips16 = 0x266,
+	PDB_Machine_MipsFpu = 0x366,
+	PDB_Machine_MipsFpu16 = 0x466,
+	PDB_Machine_PowerPC = 0x1F0,
+	PDB_Machine_PowerPCFP = 0x1F1,
+	PDB_Machine_R4000 = 0x166,
+	PDB_Machine_SH3 = 0x1A2,
+	PDB_Machine_SH3DSP = 0x1A3,
+	PDB_Machine_SH4 = 0x1A6,
+	PDB_Machine_SH5 = 0x1A8,
+	PDB_Machine_Thumb = 0x1C2,
+	PDB_Machine_WceMipsV2 = 0x169
+} LLVM_PDB_Machine;
+
+[
+	object,
+	uuid(24edbad8-37ed-4c53-8f92-521a75f0ab4e),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMBumpPtrAllocator : IDispatch
+{
+};
+
+[
+	object,
+	uuid(ecae464f-c152-41aa-af30-b3ca457245d7),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMMSFBuilder : IDispatch
+{
+	[id(1)] HRESULT addStream([in] ULONG Size, [out, retval] ULONG* Res);
+};
+
+[
+	object,
+	uuid(44c32608-18a0-4b23-ad14-09352e32c841),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMInfoStreamBuilder : IDispatch
+{
+	[id(1)] HRESULT setVersion([in] LLVM_PdbRaw_ImplVer V);
+	[id(2)] HRESULT addFeature([in] LLVM_PdbRaw_FeatureSig Sig);
+	[id(3)] HRESULT setHashPDBContentsToGUID([in] VARIANT_BOOL B);
+	[id(4)] HRESULT setSignature([in] ULONG S);
+	[id(5)] HRESULT setAge([in] ULONG A);
+	[id(6)] HRESULT setGuid([in] GUID G);
+	[id(7)] HRESULT getAge([out, retval] ULONG* age);
+	[id(8)] HRESULT getGuid([out, retval] GUID* guid);
+	[id(9)] HRESULT getSignature([out] VARIANT_BOOL* hasSignature, [out, retval] ULONG* signature);
+	[id(10)] HRESULT finalizeMsfLayout();
+};
+
+[
+	object,
+	uuid(1165f748-7fa5-45ce-a379-0ff5245ab77a),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDebugSubsection : IDispatch
+{
+};
+
+[
+	object,
+	uuid(2ae682f6-e412-4579-a51c-11403b7a3460),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDebugStringTableSubsection : ILLVMDebugSubsection
+{
+	[id(1)] HRESULT insert([in] BSTR S, [out, retval] ULONG* Res);
+	[id(2)] HRESULT getIdForString([in] BSTR S, [out, retval] ULONG* Res);
+	[id(3)] HRESULT getStringForId([in] ULONG Id, [out, retval] BSTR* Res);
+};
+
+[
+	v1_enum
+]
+typedef enum LLVM_FileChecksumKind {
+	FileChecksumKind_None,
+	FileChecksumKind_MD5,
+	FileChecksumKind_SHA1,
+	FileChecksumKind_SHA256
+} LLVM_FileChecksumKind;
+
+[
+	object,
+	uuid(19b614b3-fb79-46ed-adba-a9bf0a1c0b87),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDebugChecksumsSubsection : ILLVMDebugSubsection
+{
+	[id(1)] HRESULT construct([in] ILLVMBumpPtrAllocator* Allocator, [in] ILLVMDebugStringTableSubsection* Strings);
+	[id(2)] HRESULT addChecksum([in] BSTR FileName, [in] LLVM_FileChecksumKind Kind, [in] VARIANT Bytes);
+};
+
+[
+	object,
+	uuid(df11bf2f-a510-4294-9e26-783bb486d049),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDebugLinesSubsection : ILLVMDebugSubsection
+{
+	[id(1)] HRESULT construct([in] ILLVMDebugChecksumsSubsection* Checksums, [in] ILLVMDebugStringTableSubsection* Strings);
+	[id(2)] HRESULT setRelocationAddress([in] USHORT Segment, [in] ULONG Offset);
+	[id(3)] HRESULT setCodeSize([in] ULONG Size);
+	[id(4)] HRESULT createBlock([in] BSTR FileName);
+	[id(5)] HRESULT addLineInfo([in] ULONG Offset, [in] ULONG StartLine, [in] ULONG EndLine, [in] VARIANT_BOOL IsStatement);
+};
+
+[
+	uuid(d5e6e6c0-f99e-40bb-8a37-46c1eab2627c)
+]
+typedef struct LLVM_SectionContrib
+{
+	unsigned short ISect;
+	char Padding[2];
+	long Off;
+	long Size;
+	unsigned long Characteristics;
+	unsigned short Imod;
+	char Padding2[2];
+	unsigned long DataCrc;
+	unsigned long RelocCrc;
+} LLVM_SectionContrib;
+
+[
+	object,
+	uuid(e92295a0-641e-4e60-ad36-ae09d6cdbb7b),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDbiModuleDescriptorBuilder : IDispatch
+{
+	[id(1)] HRESULT setObjFileName([in] BSTR Name);
+	[id(2)] HRESULT addSymbolsInBulk([in] VARIANT BulkSymbols);
+	[id(3)] HRESULT getObjFileName([out, retval] BSTR* res);
+	[id(4)] HRESULT addDebugSubsection([in] ILLVMDebugSubsection* Subsection);
+	[id(5)] HRESULT setFirstSectionContrib([in] const LLVM_SectionContrib* SC);
+	[id(6)] HRESULT getModuleIndex([out, retval] ULONG* ModI);
+	[id(7)] HRESULT setPdbFilePathNI([in] ULONG NI);
+	[id(8)] HRESULT addSymbol([in] VARIANT Symbol);
+};
+
+const unsigned long COFF_Name_Size = 8;
+
+[
+	uuid(a2beee60-66b9-4e1e-939c-57d959786059)
+]
+typedef struct LLVM_COFF_Section
+{
+	char Name[COFF_Name_Size];
+	unsigned long VirtualSize;
+	unsigned long VirtualAddress;
+	unsigned long SizeOfRawData;
+	unsigned long PointertoRawData;
+	unsigned long PointerToRelocations;
+	unsigned long PointerToLinenumbers;
+	unsigned short NumberOfRelocations;
+	unsigned short NumberOfLinenumbers;
+	unsigned long Characteristics;
+} LLVM_COFF_Section;
+
+[
+	v1_enum
+]
+typedef enum LLVM_DbgHeaderType {
+	DbgHeaderType_FPO,
+	DbgHeaderType_Exception,
+	DbgHeaderType_Fixup,
+	DbgHeaderType_OmapToSrc,
+	DbgHeaderType_OmapFromSrc,
+	DbgHeaderType_SectionHdr,
+	DbgHeaderType_TokenRidMap,
+	DbgHeaderType_Xdata,
+	DbgHeaderType_Pdata,
+	DbgHeaderType_NewFPO,
+	DbgHeaderType_SectionHdrOrig,
+	DbgHeaderType_Max
+} LLVM_DbgHeaderType;
+
+[
+	object,
+	uuid(5ce95a75-991b-42be-804e-e5e002320081),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMDbiStreamBuilder : IDispatch
+{
+	[id(1)] HRESULT setVersionHeader([in] LLVM_PdbRaw_DbiVer V);
+	[id(2)] HRESULT setAge([in] ULONG A);
+	[id(3)] HRESULT setBuildNumber([in] USHORT B);
+	[id(4)] HRESULT setBuildNumberMajorMinor([in] BYTE Major, [in] BYTE Minor);
+	[id(5)] HRESULT setPdbDllVersion([in] USHORT V);
+	[id(6)] HRESULT setPdbDllRbld([in] USHORT R);
+	[id(7)] HRESULT setFlags([in] USHORT F);
+	[id(8)] HRESULT setMachineType([in] LLVM_PDB_Machine M);
+	[id(9)] HRESULT setMachineTypeCOFF([in] ULONG M);
+	[id(10)] HRESULT addModuleInfo([in] BSTR ModuleName, [out, retval] ILLVMDbiModuleDescriptorBuilder** builder);
+	[id(11)] HRESULT addModuleSourceFile([in] ILLVMDbiModuleDescriptorBuilder* Module, [in] BSTR File);
+	[id(12)] HRESULT addECName([in] BSTR Name, [out, retval] ULONG* Res);
+	[id(13)] HRESULT addSectionContrib([in] const LLVM_SectionContrib* SC);
+	[id(14)] HRESULT setSectionMap([in] VARIANT SecMap);
+	[id(15)] HRESULT addDbgStream([in] LLVM_DbgHeaderType Type, [in] VARIANT Data);
+};
+
+[
+	v1_enum
+]
+typedef enum LLVM_PdbRaw_TpiVer {
+	PdbRaw_TpiVer_PdbTpiV40 = 19950410,
+	PdbRaw_TpiVer_PdbTpiV41 = 19951122,
+	PdbRaw_TpiVer_PdbTpiV50 = 19961031,
+	PdbRaw_TpiVer_PdbTpiV70 = 19990903,
+	PdbRaw_TpiVer_PdbTpiV80 = 20040203,
+} LLVM_PdbRaw_TpiVer;
+
+[
+	object,
+	uuid(0a0a264a-cd80-4af0-a70d-15dc59e4ee17),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMTpiStreamBuilder : IDispatch
+{
+	[id(1)] HRESULT setVersionHeader([in] LLVM_PdbRaw_TpiVer Version);
+	[id(2)] HRESULT addTypeRecord([in] VARIANT Type, [in] VARIANT Hash);
+};
+
+[
+	object,
+	uuid(2a9b611c-2859-4334-9178-db1b9943b569),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMGSIStreamBuilder : IDispatch
+{
+	[id(1)] HRESULT addPublicSymbol([in] VARIANT Pub);
+	[id(2)] HRESULT addGlobalSymbol([in] VARIANT Sym);
+};
+
+[
+	object,
+	uuid(80055881-d8a2-4c07-b691-7fb8ed24eb15),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMPDBStringTableBuilder : IDispatch
+{
+	[id(1)] HRESULT insert([in] BSTR S, [out, retval] ULONG* Res);
+	[id(2)] HRESULT getIdForString([in] BSTR S, [out, retval] ULONG* Res);
+	[id(3)] HRESULT getStringForId([in] ULONG Id, [out, retval] BSTR* Res);
+	[id(4)] HRESULT setStrings([in] ILLVMDebugStringTableSubsection* Strings);
+};
+
+[
+	v1_enum
+]
+typedef enum LLVM_SpecialStream {
+	SpecialStream_OldMSFDirectory = 0,
+	SpecialStream_StreamPDB = 1,
+	SpecialStream_StreamTPI = 2,
+	SpecialStream_StreamDBI = 3,
+	SpecialStream_StreamIPI = 4,
+	SpecialStream_kSpecialStreamCount
+} LLVM_SpecialStream;
+
+[
+	object,
+	uuid(67216998-c556-4b16-b347-e7a0f0978b17),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMPDBFileBuilder : IDispatch
+{
+	[id(1)] HRESULT construct([in] ILLVMBumpPtrAllocator* allocator);
+	[id(2)] HRESULT initialize([in] ULONG blockSize);
+	[id(3)] HRESULT getMsfBuilder([out, retval] ILLVMMSFBuilder** builder);
+	[id(4)] HRESULT getInfoBuilder([out, retval] ILLVMInfoStreamBuilder** builder);
+	[id(5)] HRESULT getDbiBuilder([out, retval] ILLVMDbiStreamBuilder** builder);
+	[id(6)] HRESULT getTpiBuilder([out, retval] ILLVMTpiStreamBuilder** builder);
+	[id(7)] HRESULT getIpiBuilder([out, retval] ILLVMTpiStreamBuilder** builder);
+	[id(8)] HRESULT getGsiBuilder([out, retval] ILLVMGSIStreamBuilder** builder);
+	[id(9)] HRESULT getStringTableBuilder([out, retval] ILLVMPDBStringTableBuilder** builder);
+	[id(10)] HRESULT commit([in] BSTR Filename, [out] GUID* Guid);
+};
+
+[
+	object,
+	uuid(0ae83113-266d-4f92-bc35-9e472402fcc3),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ILLVMPDBUtilities : IDispatch
+{
+	[id(1)] HRESULT hashTypeRecord([in] VARIANT Type, [out, retval] ULONG* Res);
+};
+
+[
+	uuid(1ad0d8aa-7e3a-40b0-b209-05a677af6131),
+	version(1.0),
+]
+library LLVMPDBCOM
+{
+	importlib("stdole2.tlb");
+
+	enum LLVM_FileChecksumKind;
+	enum LLVM_PDB_Machine;
+	enum LLVM_PdbRaw_DbiVer;
+	enum LLVM_PdbRaw_FeatureSig;
+	enum LLVM_PdbRaw_ImplVer;
+	enum LLVM_PdbRaw_TpiVer;
+	enum LLVM_SpecialStream;
+	enum LLVM_DbgHeaderType;
+
+	struct LLVM_SectionContrib;
+	struct LLVM_COFF_Section;
+
+	[
+		uuid(2c35f922-c46a-48a3-8b29-446b4aa8d9f8)
+	]
+	coclass LLVMBumpPtrAllocator
+	{
+		[default] interface ILLVMBumpPtrAllocator;
+	};
+
+	[
+		uuid(5271aa39-081f-476b-b48d-9156da234c82),
+		noncreatable
+	]
+	coclass LLVMMSFBuilder
+	{
+		[default] interface ILLVMMSFBuilder;
+	};
+
+	[
+		uuid(59dedb9b-cbac-47e8-91e3-2f4150cbd3e8),
+		noncreatable
+	]
+	coclass LLVMInfoStreamBuilder
+	{
+		[default] interface ILLVMInfoStreamBuilder;
+	};
+
+	[
+		uuid(6f49a856-034e-4329-9a16-567a96439261)
+	]
+	coclass LLVMDebugStringTableSubsection
+	{
+		[default] interface ILLVMDebugStringTableSubsection;
+	};
+
+	[
+		uuid(8b5dd35a-59d6-45c3-9bed-9a6947525d15)
+	]
+	coclass LLVMDebugChecksumsSubsection
+	{
+		[default] interface ILLVMDebugChecksumsSubsection;
+	};
+
+	[
+		uuid(297e3879-b8ab-4a36-9d33-cf6b1a12e876)
+	]
+	coclass LLVMDebugLinesSubsection
+	{
+		[default] interface ILLVMDebugLinesSubsection;
+	};
+
+	[
+		uuid(8d954fff-3610-4ff1-ac56-000c8835c2e5),
+		noncreatable
+	]
+	coclass LLVMDbiModuleDescriptorBuilder
+	{
+		[default] interface ILLVMDbiModuleDescriptorBuilder;
+	};
+
+	[
+		uuid(fa6c39bf-7dfd-4265-97f2-68dac89cfe98),
+		noncreatable
+	]
+	coclass LLVMDbiStreamBuilder
+	{
+		[default] interface ILLVMDbiStreamBuilder;
+	};
+
+	[
+		uuid(fb57bdaf-b937-4d6a-9b81-32c258cce364),
+		noncreatable
+	]
+	coclass LLVMTpiStreamBuilder
+	{
+		[default] interface ILLVMTpiStreamBuilder;
+	};
+
+	[
+		uuid(28af174a-4751-42fc-a573-19b9f60e45f9),
+		noncreatable
+	]
+	coclass LLVMGSIStreamBuilder
+	{
+		[default] interface ILLVMGSIStreamBuilder;
+	};
+
+	[
+		uuid(ff8bdb5a-3939-42da-9ef9-6cf8e211a2d7),
+		noncreatable
+	]
+	coclass LLVMPDBStringTableBuilder
+	{
+		[default] interface ILLVMPDBStringTableBuilder;
+	};
+
+	[
+		uuid(84082637-a965-41b7-b6b7-4c185eb645a7)
+	]
+	coclass LLVMPDBFileBuilder
+	{
+		[default] interface ILLVMPDBFileBuilder;
+	};
+
+	[
+		uuid(a67e7148-9565-462a-98f9-e0d87ee01be9)
+	]
+	coclass LLVMPDBUtilities
+	{
+		[default] interface ILLVMPDBUtilities;
+	};
+};
+import "shobjidl.idl";

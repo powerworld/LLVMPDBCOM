@@ -1,0 +1,17 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {8b5dd35a-59d6-45c3-9bed-9a6947525d15} = s 'LLVMDebugChecksumsSubsection class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+			Version = s '1.0'
+			val AppID = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+		}
+	}
+}

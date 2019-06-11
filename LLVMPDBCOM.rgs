@@ -1,0 +1,10 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		ForceRemove {1ad0d8aa-7e3a-40b0-b209-05a677af6131} = s 'LLVMPDBCOM'
+		{
+			val DllSurrogate = s ''
+		}
+	}
+}

@@ -1,0 +1,17 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {ff8bdb5a-3939-42da-9ef9-6cf8e211a2d7} = s 'LLVMPDBStringTableBuilder class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+			Version = s '1.0'
+			val AppID = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+		}
+	}
+}

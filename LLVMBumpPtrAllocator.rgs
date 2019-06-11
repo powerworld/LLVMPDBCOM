@@ -1,0 +1,17 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {2c35f922-c46a-48a3-8b29-446b4aa8d9f8} = s 'LLVMBumpPtrAllocator class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+			Version = s '1.0'
+			val AppID = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+		}
+	}
+}

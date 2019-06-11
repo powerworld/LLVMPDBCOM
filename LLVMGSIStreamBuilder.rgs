@@ -1,0 +1,17 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {28af174a-4751-42fc-a573-19b9f60e45f9} = s 'LLVMGSIStreamBuilder class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+			Version = s '1.0'
+			val AppID = s '{1ad0d8aa-7e3a-40b0-b209-05a677af6131}'
+		}
+	}
+}
